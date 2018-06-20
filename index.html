@@ -314,7 +314,10 @@
 						<td>2018 / 02</td>
 						<td class="genre-entry">RPG, Action, Adventure</td>
 						<td>$49.99</td>
-						<td><span class="game_size">1.25GB</span><br><div class="sizebar-con"><div class="sizebar"><div class="sizebar-inner"></div></div></div></td>
+						<td>
+              <span class="game_size">1.25GB</span><br>
+              
+            </td>
 						
 					</tr>
 					<tr>
@@ -326,7 +329,9 @@
 						<td>2018 / 04</td>
 						<td class="genre-entry">RPG, Action</td>
 						<td>$29.99</td>
-						<td><span class="game_size">3.36GB</span><br><div class="sizebar-con"><div class="sizebar"><div class="sizebar-inner"></div></div></div></td>
+						<td><span class="game_size">3.36GB</span>
+              
+            </td>
 						
 					</tr>
 					<tr>
@@ -337,7 +342,10 @@
 						<td>2018 / 02</td>
 						<td class="genre-entry">RPG, Strategy</td>
 						<td>$19.99</td>
-						<td><span class="game_size">1.36GB</span><br><div class="sizebar-con"><div class="sizebar"><div class="sizebar-inner"></div></div></div></td>
+						<td>
+              <span class="game_size">1.36GB</span>
+              
+            </td>
 						
 					</tr>
 					<tr>
@@ -348,7 +356,10 @@
 						<td>2017 / 12</td>
 						<td class="genre-entry">RPG, Action</td>
 						<td>$59.99</td>
-						<td><span class="game_size">8.36GB</span><br><div class="sizebar-con"><div class="sizebar"><div class="sizebar-inner"></div></div></div></td>
+						<td>
+              <span class="game_size">8.36GB</span>
+              
+            </td>
 						
 					</tr>
 					<tr>
@@ -360,7 +371,9 @@
 						<td>2017 / 12</td>
 						<td class="genre-entry">Action</td>
 						<td>$59.99</td>
-						<td><span class="game_size">17.0GB</span><br><div class="sizebar-con"><div class="sizebar"><div class="sizebar-inner"></div></div></div></td>
+						<td>
+              <span class="game_size">17.0GB</span>
+            </td>
 						
 					</tr>
 
@@ -407,6 +420,7 @@ function modPrice(price) {
 }
   
   function calcSwitchStorage(gameSize, addBool) {
+    var totalWidth = 0;
     if (addBool === true) {
       totalSize += modSize(gameSize);
       totalWidth = totalSize / 32000 * 100;
@@ -426,16 +440,16 @@ function modPrice(price) {
     }
     
     if (totalWidth > 20) {
-       $('#switch-sizebar').css("background", "#9fc911");
+       $('#switch-sizebar').css("background", "linear-gradient(#c9ef49, #acd620)");
     }
     if (totalWidth > 40) {
-       $('#switch-sizebar').css("background", "#c9bb11");
+       $('#switch-sizebar').css("background", "linear-gradient(#efe949, #ddd620)");
     }
      if (totalWidth > 60) {
-       $('#switch-sizebar').css("background", "#c99011");
+       $('#switch-sizebar').css("background", "linear-gradient(#efa949, #dd8d20)");
     }
     if (totalWidth > 80) {
-       $('#switch-sizebar').css("background", "#c93411");
+       $('#switch-sizebar').css("background", "linear-gradient(#ef6949, #d94420)");
     }
   }
   
@@ -485,24 +499,6 @@ function modPrice(price) {
 		fileEntries.push(fileRows[i].getElementsByTagName('TD')[4]);
 	}
   
-	for (j = 0; j < fileEntries.length; j++) {
-    var barSize  = modSize(fileEntries[j].innerHTML);
-    console.log(barSize);
-    var barWidth = (barSize / 32000 * 100) + "%";
-    $(fileEntries[j]).find('.sizebar').css('width', barWidth);
-    
-    if (barSize > (5000)) {
-      $(fileEntries[j]).find('.sizebar').css('background', 'linear-gradient(#efe249, #ddce1d)');
-    }
-    
-    if (barSize > (10000)) {
-      $(fileEntries[j]).find('.sizebar').css('background', 'linear-gradient(#efb649, #dd9b1d)');
-    }
-    
-    if (barSize > (15000)) {
-      $(fileEntries[j]).find('.sizebar').css('background', 'linear-gradient(#ef6349, #dd3b1d)');
-    }
-	}
 });
   
 
