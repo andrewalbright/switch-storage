@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sw1tch</title>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet">
+<script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<style>
+
+  html,
+  body {
+    background: #eef0f4;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1em;
+    font-weight: 500;
+  }
+  .container {background:#fff;padding:.5em}
+  #game-table, #search-con {margin:1em auto;max-width:80em;}
+
+  #search-field {
+    background:#fff;
+    border: 2px solid #ccc;
+    border-radius:2px;
+    margin:1em 0 .25em 0;
+    padding:0 .25em;
+  }
+  #storage-con {
+    background: #f2f2f2;
+    border: .25em inset #32587e;
+    border-radius: .25em;
+    display: block;
+    margin: .5em auto;
+    height: 15em;
+    width: 100%;
+    max-width: 40em;
+  }
+  .storage-header {
+    text-align: center;
+  }
+  #game-table th {
+    background: #336189;
+    color: #fff;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+    font-size: 1.125em;
+    transition: .2s;
+  }
+  #game-table th:hover {
+    background: #648aa7;
+    transition:.2s;
+    }
+  #game-table th:nth-child(1) {width:26%} /* Title */
+  #game-table th:nth-child(2) {width:18%} /* Released */
+  #game-table th:nth-child(3) {width:18%} /* Genre */
+  #game-table th:nth-child(4) {width:10%} /* Price */
+  #game-table th:nth-child(5) {width:18%} /* Filesize */
+  #game-table th:nth-child(6) {width:20%} /* Exclusive*/
+  #game-table td:nth-child(1) {
+    font-size: 1.125em;
+  }
+  .table-sort {
+    padding:0 .25em;
+    position:relative;
+    overflow:hidden;
+  }
+  .table-sort span {
+    position:absolute;
+    height:0;
+    width:0;
+    right:8px;
+  }
+  .table-sort .down {
+    top: 1.25em;
+    border-top: 4px solid #fff;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+  }
+  .table-sort .up {
+    top: .5em;
+    border-bottom: 4px solid #fff;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid transparent;
+  }
+  .sizebar-con {
+    background: linear-gradient(#f2f2f2,#ccc);
+    border: 2px groove #ccc;
+    border-radius: 2px;
+    height: 1em;
+    padding: 0;
+    width: 100%;
+  }
+  #switch-sizebar-con {
+    background: linear-gradient(#f2f2f2,#ccc);
+    border: 2px groove #ccc;
+    border-radius: 2px;
+    height: 2em;
+    margin: .5em auto;
+    padding: .125em;
+    overflow: hidden;
+    width: 100%;
+    max-width: 40em;
+  }
+  #switch-sizebar {
+    background:#11c955;
+    width: 0;
+    height: 100%;
+  }
+  .game_storage {
+    background: #ce5c9e;
+    color: #fff;
+    display: inline-block;
+    margin: .5em;
+    padding: .5em 1em;
+    text-align: center;
+  }
+  .sizebar {
+    background:#11c955;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+  }
+  
+  .sizebar .sizebar-inner {
+    height: 100%;
+    width: 25%;
+    max-width: 100%;
+  }
+  .table-striped>tbody>tr:nth-of-type(odd) {
+    background: #e8eef0;
+  }
+.add_to_storage_btn {
+  background: #70c6da;
+  border: 0;
+  border-radius: .125em;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-size: .875em;
+  margin: 1em auto;
+  padding: .5em 2em;
+  text-align: center;
+  transition: .2s;
+}
+.add_to_storage_btn:hover,
+.add_to_storage_btn:active {
+  background: #499caf;
+  transition: .2s;
+}
+@media screen and (max-width:40em) {
+	#game-table .table-sort {
+    font-size: .875em
+  }
+  
+  #game-table #genre-cat,
+  #game-table .genre-entry {
+    display:none;
+  }
+}
+</style>
+</head>
+<body>
+	<div class="container">
+    <div class="row">
+      <div class="col-sm-4 col-xs-12">
+        <div id="search-con">
+					Search: <input id="search-field" onkeyup="searchTable();" onblur="searchTable();" type="text">
+				</div>
+      </div>
+      <div class="col-sm-8 col-xs-12">
+        <h2 class="storage-header">Nintendo Switch Storage (32GB)</h2>
+        <div id="switch-sizebar-con">
+          <div id="switch-sizebar">
+            
+          </div>
+        </div>
+        <div id="storage-con">
+					
+				</div>
+      </div>
+    </div>
+		<div class="row">
+			<div class="col-xs-12">
+				
+				
+				<table id="game-table" class="table table-striped">
+					<tr>
+						<th id="title-cat" class="table-sort" onclick="sortTable(0);">Title <span class="up"></span><span class="down"></span></th>
+						<th id="release-cat" class="table-sort" onclick="sortTable(1);">Released <span class="up"></span><span class="down"></span></th>
+						<th id="genre-cat" class="table-sort" >Genre</th>
+						<th class="table-sort" onclick="sortTable(3);">Price <span class="up"></span><span class="down"></span></th>
+						<th class="table-sort" onclick="sortTable(4);">Filesize <span class="up"></span><span class="down"></span></th>
+						
+					</tr>
+
+					<tr>
+						<td><span class="game_name">SteamWorld Dig</span>
+              <br>
+              <div class="add_to_storage_btn">Add to Storage</div>
+            </td>
+						<td>2018 / 02</td>
+						<td class="genre-entry">RPG, Action</td>
+						<td>$9.99</td>
+            <td><span class="game_size">903MB</span><br><div class="sizebar-con"><div class="sizebar"><div class="sizebar-inner"></div></div></div></td>
+						
+					</tr>
+
+					<tr>
+						<td>
+              <span class="game_name">Night in the Woods</span>
+               <br>
+              <div class="add_to_storage_btn">Add to Storage</div>
+            </td>
+						<td>2018 / 02</td>
+						<td class="genre-entry">Platformer, Action</td>
+						<td>$19.99</td>
+						<td><span class="game_size">5.6GB</span><br><div class="sizebar-con"><div class="sizebar"><div class="sizebar-inner"></div></div></div></td>
+						
+					</tr>
+					<tr>
+						<td>
+              <span class="game_name">Super Mario Odyssey</span>
+               <br>
+              <div class="add_to_storage_btn">Add to Storage</div>
+            </td>
+						<td>2017 / 10</td>
+						<td class="genre-entry">Platformer, Action</td>
+						<td>$59.99</td>
+						<td><span class="game_size">5.0GB</span><br><div class="sizebar-con"><div class="sizebar"><div class="sizebar-inner"></div></div></div></td>
+						
+					</tr>
+					<tr>
+						<td>
+              <span class="game_name">Splatoon 2</span>
+               <br>
+              <div class="add_to_storage_btn">Add to Storage</div>
+            </td>
+						<td>2017 / 07</td>
+						<td class="genre-entry">Action</td>
+						<td>$59.99</td>
+						<td><span class="game_size">5.6GB</span><br><div class="sizebar-con"><div class="sizebar"><div class="sizebar-inner"></div></div></div></td>
+						
+					</tr>
+					<tr>
+						<td>
+              <span class="game_name">Arms</span>
+               <br>
+              <div class="add_to_storage_btn">Add to Storage</div>
+            </td>
+						<td>2017 / 06</td>
+						<td class="genre-entry">Fighting</td>
+						<td>$59.99</td>
+						<td><span class="game_size">3.6GB</span><br><div class="sizebar-con"><div class="sizebar"><div class="sizebar-inner"></div></div></div></td>
+						
+					</tr>
+					<tr>
+						<td>
+              <span class="game_name">Super Bomberman R</span>
+               <br>
+              <div class="add_to_storage_btn">Add to Storage</div>
+            </td>
+						<td>2017 / 03</td>
+						<td class="genre-entry">Arcade, Action</td>
+						<td>$49.99</td>
+						<td><span class="game_size">700MB</span><br><div class="sizebar-con"><div class="sizebar"><div class="sizebar-inner"></div></div></div></td>
+						
+					</tr>
+					<tr>
+						<td>
+              <span class="game_name">Aegis Defenders</span>
+               <br>
+              <div class="add_to_storage_btn">Add to Storage</div>
+            </td>
+						<td>2018 / 02</td>
+						<td class="genre-entry">RPG, Action</td>
+						<td>$19.99</td>
+						<td><span class="game_size">500MB</span><br><div class="sizebar-con"><div class="sizebar"><div class="sizebar-inner"></div></div></div></td>
+						
+					</tr>
+					<tr>
+						<td>
+              <span class="game_name">Flip Wars</span>
+               <br>
+              <div class="add_to_storage_btn">Add to Storage</div>
+            </td>
+						<td>2017 / 08</td>
+						<td class="genre-entry">RPG, Action</td>
+						<td>$9.99</td>
+						<td><span class="game_size">560MB</span><br><div class="sizebar-con"><div class="sizebar"><div class="sizebar-inner"></div></div></div></td>
+						
+					</tr>
+					<tr>
+						<td><span class="game_name">The Elder Scrolls V: Skyrim<sup>&reg;</sup></span>
+               <br>
+              <div class="add_to_storage_btn">Add to Storage</div>
+            </td>
+						<td>2017 / 12</td>
+						<td class="genre-entry">RPG, Action</td>
+						<td>$1.99</td>
+						<td><span class="game_size">12.05GB</span><br><div class="sizebar-con"><div class="sizebar"><div class="sizebar-inner"></div></div></div></td>
+						
+					</tr>
+					<tr>
+						<td><span class="game_name">Dragon Quest Builders</span>
+               <br>
+              <div class="add_to_storage_btn">Add to Storage</div>
+            </td>
+						<td>2018 / 02</td>
+						<td class="genre-entry">RPG, Action, Adventure</td>
+						<td>$49.99</td>
+						<td><span class="game_size">1.25GB</span><br><div class="sizebar-con"><div class="sizebar"><div class="sizebar-inner"></div></div></div></td>
+						
+					</tr>
+					<tr>
+						<td>
+              <span class="game_name">Kirby Star Allies</span>
+               <br>
+              <div class="add_to_storage_btn">Add to Storage</div>
+            </td>
+						<td>2018 / 04</td>
+						<td class="genre-entry">RPG, Action</td>
+						<td>$29.99</td>
+						<td><span class="game_size">3.36GB</span><br><div class="sizebar-con"><div class="sizebar"><div class="sizebar-inner"></div></div></div></td>
+						
+					</tr>
+					<tr>
+						<td><span class="game_name">Mercenaries Saga Chronicles</span>
+               <br>
+              <div class="add_to_storage_btn">Add to Storage</div>
+            </td>
+						<td>2018 / 02</td>
+						<td class="genre-entry">RPG, Strategy</td>
+						<td>$19.99</td>
+						<td><span class="game_size">1.36GB</span><br><div class="sizebar-con"><div class="sizebar"><div class="sizebar-inner"></div></div></div></td>
+						
+					</tr>
+					<tr>
+						<td><span class="game_name">Xenoblade Chronicles 2</span>
+               <br>
+              <div class="add_to_storage_btn">Add to Storage</div>
+            </td>
+						<td>2017 / 12</td>
+						<td class="genre-entry">RPG, Action</td>
+						<td>$59.99</td>
+						<td><span class="game_size">8.36GB</span><br><div class="sizebar-con"><div class="sizebar"><div class="sizebar-inner"></div></div></div></td>
+						
+					</tr>
+					<tr>
+						<td>
+              <span class="game_name">Doom</span>
+               <br>
+              <div class="add_to_storage_btn">Add to Storage</div>
+            </td>
+						<td>2017 / 12</td>
+						<td class="genre-entry">Action</td>
+						<td>$59.99</td>
+						<td><span class="game_size">17.0GB</span><br><div class="sizebar-con"><div class="sizebar"><div class="sizebar-inner"></div></div></div></td>
+						
+					</tr>
+
+				</table>
+			</div>
+		</div>
+	</div>
+
+<script>
+  
+$(document).ready(function() {
+  var storageArr = [];
+  var storageHTML = "";
+  var totalSize = 0;
+  var currColor = 0;
+  
+  function randBGColor() {
+    var colors = [
+      "#4e9f7a", "#9f7a4e", "#9f4e4e", "#4e9f96", "#4e6d9f", "#674e9f"
+    ];
+    var randColor = currColor;
+    currColor++;
+    if (currColor == 6) {
+      currColor = 0;
+    }
+    return colors[randColor];
+  }
+  
+  function modSize(filesize) {
+	if (filesize.includes("MB")) {
+		filesize = parseFloat(filesize.replace("MB",""));
+		
+	}
+  else if (filesize.includes("GB")) {
+    filesize = filesize.replace("GB","");
+    filesize = parseFloat(filesize) * 1000;
+  }
+	return filesize;
+}
+
+function modPrice(price) {
+	price = parseFloat(price.replace("$",''));
+	return price;
+}
+  
+  function calcSwitchStorage(gameSize, addBool) {
+    if (addBool === true) {
+      totalSize += modSize(gameSize);
+      totalWidth = totalSize / 32000 * 100;
+      if (totalWidth > 100) {
+        totalWidth = 100;
+      }
+      $('#switch-sizebar').css("width", totalWidth + "%");
+    }
+    else {
+      totalSize -= modSize(gameSize);
+      totalWidth = totalSize / 32000 * 100;
+      if (totalWidth > 100) {
+        totalWidth = 100;
+      }
+      $('#switch-sizebar').css("width", totalWidth + "%");
+      
+    }
+    
+    if (totalWidth > 20) {
+       $('#switch-sizebar').css("background", "#9fc911");
+    }
+    if (totalWidth > 40) {
+       $('#switch-sizebar').css("background", "#c9bb11");
+    }
+     if (totalWidth > 60) {
+       $('#switch-sizebar').css("background", "#c99011");
+    }
+    if (totalWidth > 80) {
+       $('#switch-sizebar').css("background", "#c93411");
+    }
+  }
+  
+  $('.add_to_storage_btn').click(function() {
+    var gameName = $(this).parent().find('.game_name').html();
+    var gameSize = $(this).parent().next().next().next().next().find('.game_size').html();
+    if ($(this).html() != "Remove") {
+      
+      var bgColor = randBGColor();
+      var gameHTML = "<span class=\"game_storage\" style=\"background: " + bgColor + ";\" >" + gameName + "</span>";
+      $(this).html("Remove");
+      $(this).css('background','#953434');
+      storageArr.push("<span class=\"game_storage\" style=\"background: " + bgColor + ";\" >" + gameName + "</span>");
+      storageHTML = "";
+      for (i = 0; i < storageArr.length; i++) {
+        storageHTML += storageArr[i];
+      }
+      $('#storage-con').html(storageHTML);
+      calcSwitchStorage(gameSize, true);
+    }
+    else {
+      $(this).html("Add to Storage");
+      $(this).css('background','#70c6da');
+      for (i = 0; i < storageArr.length; i++) {
+        if (storageArr[i].includes(gameName)) {
+          storageArr.splice(i, 1);
+          break;
+        }
+      }
+      storageHTML = "";
+      for (i = 0; i < storageArr.length; i++) {
+        storageHTML += storageArr[i];
+      }
+      $('#storage-con').html(storageHTML);
+      calcSwitchStorage(gameSize, false);
+    }
+  });
+  
+  
+  sortTable(0);
+	// generate Filesize bars
+	var fileRows = document.getElementsByTagName('TR');
+	var fileEntries = [];
+	var barWidths = [];
+	for (i = 1; i < fileRows.length; i++) {
+
+		fileEntries.push(fileRows[i].getElementsByTagName('TD')[4]);
+	}
+  
+	for (j = 0; j < fileEntries.length; j++) {
+    var barSize  = modSize(fileEntries[j].innerHTML);
+    console.log(barSize);
+    var barWidth = (barSize / 32000 * 100) + "%";
+    $(fileEntries[j]).find('.sizebar').css('width', barWidth);
+    
+    if (barSize > (5000)) {
+      $(fileEntries[j]).find('.sizebar').css('background', '#c9bb11');
+    }
+    
+    if (barSize > (10000)) {
+      $(fileEntries[j]).find('.sizebar').css('background', '#c95f11');
+    }
+    
+    if (barSize > (15000)) {
+      $(fileEntries[j]).find('.sizebar').css('background', '#c92611');
+    }
+	}
+});
+  
+
+function sortTable(n) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("game-table");
+  switching = true;
+  // Set the sorting direction to ascending:
+  dir = "asc"; 
+  /* Make a loop that will continue until
+  no switching has been done: */
+  while (switching) {
+    // Start by saying: no switching is done:
+    switching = false;
+    rows = table.getElementsByTagName("TR");
+    /* Loop through all table rows (except the
+    first, which contains table headers): */
+    for (i = 1; i < (rows.length - 1); i++) {
+      // Start by saying there should be no switching:
+      shouldSwitch = false;
+      /* Get the two elements you want to compare,
+      one from current row and one from the next: */
+      x = rows[i].getElementsByTagName("TD")[n];
+      y = rows[i + 1].getElementsByTagName("TD")[n];
+      /* Check if the two rows should switch place,
+      based on the direction, asc or desc: */
+      if (dir == "asc") {
+				if (n === 3) {
+					if (modPrice(x.innerHTML) > modPrice(y.innerHTML)) {
+						console.log (modPrice(x.innerHTML) + " > " + modPrice(y.innerHTML));
+						// If so, mark as a switch and break the loop:
+						shouldSwitch= true;
+						break;
+					}
+				}
+				else if (n === 4) {
+					if (modSize(x.innerHTML) > modSize(y.innerHTML)) {
+						//console.log (modSize(x.innerHTML));
+						// If so, mark as a switch and break the loop:
+						shouldSwitch= true;
+						break;
+					}
+				}
+        else {
+					if (x.innerHTML.toLowerCase().replace("the ","") > y.innerHTML.toLowerCase().replace("the ","")) {
+						// If so, mark as a switch and break the loop:
+						console.log(x.innerHTML.toLowerCase().replace("the ","") + " > " + y.innerHTML.toLowerCase().replace("the ",""));
+						shouldSwitch= true;
+						break;
+					}
+				}
+				
+      } else if (dir == "desc") {
+          if (n === 3) {
+					if (modPrice(x.innerHTML) < modPrice(y.innerHTML)) {
+						console.log (modPrice(x.innerHTML) + " < " + modPrice(y.innerHTML));
+						// If so, mark as a switch and break the loop:
+						shouldSwitch= true;
+						break;
+					}
+				}
+				else if (n === 4) {
+					if (modSize(x.innerHTML) < modSize(y.innerHTML)) {
+						
+						// If so, mark as a switch and break the loop:
+						shouldSwitch= true;
+						break;
+					}
+				}
+        else {
+					if (x.innerHTML.toLowerCase().replace("the ","") < y.innerHTML.toLowerCase().replace("the ","")) {
+						// If so, mark as a switch and break the loop:
+						console.log(x.innerHTML.toLowerCase().replace("the ","") + " > " + y.innerHTML.toLowerCase().replace("the ",""));
+						shouldSwitch= true;
+						break;
+					}
+				}
+				
+      }
+    }
+    if (shouldSwitch) {
+      /* If a switch has been marked, make the switch
+      and mark that a switch has been done: */
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      // Each time a switch is done, increase this count by 1:
+      switchcount ++; 
+    } else {
+      /* If no switching has been done AND the direction is "asc",
+      set the direction to "desc" and run the while loop again. */
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+}
+
+
+
+
+
+function searchTable() {
+	console.log("changed!");
+	var term = $("#search-field").val();
+	console.log(term);
+	var table = document.getElementById('game-table')
+	var rows = table.getElementsByTagName('TR');
+	for (i = 1; i < rows.length; i++) {
+		if (rows[i].innerHTML.toLowerCase().includes(term.toLowerCase())) {
+			rows[i].style.display = "table-row";
+		}
+		else {
+			rows[i].style.display = "none";
+		}
+		
+	}
+}
+
+	
+  
+  
+
+</script>
+</body>
+</html>
