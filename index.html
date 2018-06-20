@@ -108,7 +108,7 @@
     max-width: 40em;
   }
   #switch-sizebar {
-    background:#11c955;
+    background: linear-gradient(#8fe569, #5cd825);
     width: 0;
     height: 100%;
   }
@@ -492,15 +492,15 @@ function modPrice(price) {
     $(fileEntries[j]).find('.sizebar').css('width', barWidth);
     
     if (barSize > (5000)) {
-      $(fileEntries[j]).find('.sizebar').css('background', '#c9bb11');
+      $(fileEntries[j]).find('.sizebar').css('background', 'linear-gradient(#efe249, #ddce1d)');
     }
     
     if (barSize > (10000)) {
-      $(fileEntries[j]).find('.sizebar').css('background', '#c95f11');
+      $(fileEntries[j]).find('.sizebar').css('background', 'linear-gradient(#efb649, #dd9b1d)');
     }
     
     if (barSize > (15000)) {
-      $(fileEntries[j]).find('.sizebar').css('background', '#c92611');
+      $(fileEntries[j]).find('.sizebar').css('background', 'linear-gradient(#ef6349, #dd3b1d)');
     }
 	}
 });
