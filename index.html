@@ -475,7 +475,7 @@ $(document).ready(function() {
   
   $('.add_to_storage_btn').click(function() {
     var gameName = $(this).parent().find('.game_name').html();
-    var gameSize = $(this).parent().next().next().next().next().find('.game_size').html();
+    var gameSize = $(this).parent().next().next().next().find('.game_size').html();
     if ($(this).html() != "Remove") {
       
       var bgColor = randBGColor();
